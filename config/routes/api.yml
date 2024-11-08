@@ -1,0 +1,34 @@
+command_build:
+    path: /command-build/{commandName}
+    controller: App\Controller\AppStatusController::buildCommandAction
+    methods:    POST
+
+api_app_status:
+    path: /app-status
+    controller: App\Controller\AppStatusController::statusAction
+
+app_status.current_tag:
+    path: /app-status/current-tag
+    controller: App\Controller\AppStatusController::currentTagAction
+
+app_status.available_tags:
+    path: /app-status/available-tags
+    controller: App\Controller\AppStatusController::availableTagsAction
+
+app_status.switch_tag:
+    path: /app-status/switch-tag
+    controller: App\Controller\AppStatusController::switchTagAction
+    methods:    POST
+
+app_status.check_updates:
+    path: /app-status/check-updates
+    controller: App\Controller\AppStatusController::checkUpdatesAction
+    methods:    GET
+
+sites_list:
+    path: /sites-list
+    controller: App\Controller\SitesController::listAction
+
+drush_uli:
+    path: /drush-uli
+    controller: App\Controller\AppStatusController::drushUliAction

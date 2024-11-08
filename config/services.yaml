@@ -19,6 +19,113 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Command\CheckRequirementsCommand:
+        arguments:
+            $name: null
+            $pathToAcquiaSshKey: '%env(app_acquia_ssh_path_to_keys)%'
+            $platformRepositoryUrl: '%env(platform_repository_url)%'
+
+    App\Services\PlatformManager:
+        arguments:
+            $platformRepositoryURL: '%env(platform_repository_url)%'
+
+    App\Services\SiteInfoExtractor:
+        arguments:
+            $authUser: '%env(app_acquia_site_auth_user)%'
+            $authPwd: '%env(app_acquia_site_auth_pwd)%'
+
+    App\Services\DataProviderBridge:
+        arguments:
+            $dataproviderUrl: '%env(app_dataprovider_url)%'
+            $jnjUser: '%env(app_jnj_user)%'
+            $jnjPwd: '%env(app_jnj_pwd)%'
+
+    App\Services\LocalSiteCreator:
+        arguments:
+            $dbUser: '%env(database_user)%'
+            $dbPassword: '%env(database_password)%'
+
+    # Site install @TODO Refactor.
+    App\EventListener\SiteInstall\BuildPlatform:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.build_platform', method: 'run' }
+    App\EventListener\SiteInstall\BuildSite:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.build_site', method: 'run' }
+    App\EventListener\SiteInstall\BuildWhitesite:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.whitesite', method: 'run' }
+    App\EventListener\SiteInstall\ImportDatabase:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.download_database', method: 'run' }
+    App\EventListener\SiteInstall\SynchronizeDatabase:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.download_database', method: 'run' }
+    App\EventListener\SiteInstall\DownloadFiles:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.download_files', method: 'run' }
+    App\EventListener\SiteInstall\PostInstallDrushCommands:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.post_publish', method: 'run' }
+    App\EventListener\SiteInstall\PostInstallInfo:
+        tags:
+            - { name: 'kernel.event_listener', event: 'site.install.post_publish', method: 'run' }
+
+    # New clone install.
+    App\EventListener\NewCloneInstall\BuildSite:
+        tags:
+            - { name: 'kernel.event_listener', event: 'newClone.install.build_site', method: 'run' }
+
+    # Environment cleanup
+    App\EventListener\SiteCleanup\PreCleanup:
+        tags: [ { name: 'kernel.event_listener', method: 'run', event: 'environment.cleanup.prepare' } ]
+    App\EventListener\SiteCleanup\DeleteDatabase:
+        tags: [ { name: 'kernel.event_listener', method: 'run', event: 'environment.cleanup.database' } ]
+    App\EventListener\SiteCleanup\DeleteFiles:
+        tags: [ { name: 'kernel.event_listener', method: 'run', event: 'environment.cleanup.files' } ]
+
+    # Configure $name parameter explicitly
+    App\Command\InstallCommand:
+        arguments:
+            $name: null
+        tags: [ { name: 'kernel.event_listener', method: 'run', event: 'app:site:install' } ]
+    App\Command\Platform\PlatformDownloadCommand:
+        arguments:
+            $name: null
+    App\Command\Platform\PlatformListTagsCommand:
+        arguments:
+            $name: null
+    App\Command\Platform\PlatformUpdateCommand:
+        arguments:
+            $name: null
+    App\Command\Site\CleanupCommand:
+        arguments:
+            $name: null
+    App\Command\Site\CloneDatabaseCommand:
+        arguments:
+            $name: null
+    App\Command\Site\DownloadDatabaseCommand:
+        arguments:
+            $name: null
+    App\Command\Site\DownloadFilesCommand:
+        arguments:
+            $name: null
+    App\Command\Site\InfoCommand:
+        arguments:
+            $name: null
+    App\Command\Site\InstallCommand:
+        arguments:
+            $name: null
+    App\Command\Site\NewCloneInstallCommand:
+        arguments:
+            $name: null
+    App\Command\Site\SyncDatabaseCommand:
+        arguments:
+            $name: null
+    App\Command\Site\WhitesiteInstallCommand:
+        arguments:
+            $name: null
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

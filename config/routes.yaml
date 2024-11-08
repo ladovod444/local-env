@@ -1,3 +1,15 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+_api:
+  resource: routes/api.yml
+  prefix: /api/v1
+
+app_status:
+  path: /phpinfo
+  controller:  App\Controller\AppStatusController:phpinfoAction
+
+#homepage:
+#  path: /
+#  defaults:  { _controller: App:Default:index }
