@@ -4,15 +4,16 @@ namespace App\Controller;
 
 use App\Command\AbstractCommand;
 use App\Services\GitDriver;
+use OpenApi\Attributes\JsonContent;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Serializer\SerializerInterface;
+use OpenApi\Attributes as OA;
 
 /**
  * Class AppStatusController
@@ -23,10 +24,17 @@ class AppStatusController extends AbstractController
 {
 
     /**
+     * Status of the application.
+     *
      * @param SerializerInterface $serializer
      *
      * @return JsonResponse
      */
+    #[OA\Response(
+      response: 200,
+      description: 'Returns the status of the application'
+    )]
+    #[OA\Tag(name: "Api status endpoints")]
     public function statusAction(SerializerInterface $serializer)
     {
         $parameters = [
@@ -40,19 +48,22 @@ class AppStatusController extends AbstractController
     }
 
     /**
-     * @param string          $commandName
+     * Builds a command string
+     *
      * @param KernelInterface $kernel
      * @param Request         $request
      *
      * @return JsonResponse
      */
+    #[OA\Response(
+      response: 200,
+      description: 'Returns api:install command'
+    )]
+    #[OA\Tag(name: "Api build command")]
     public function buildCommandAction($commandName, KernelInterface $kernel, Request $request)
     {
         $application = new Application($kernel);
         $application->setAutoExit(false);
-
-        $d = 1;
-        //dump($application->find($commandName)); die();
 
         try {
             /** @var AbstractCommand $command */
@@ -104,10 +115,13 @@ class AppStatusController extends AbstractController
     }
 
     /**
+     * Checks for platforms updates.
+     *
      * @param \App\Services\GitDriver $gitDriver
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
+    #[OA\Tag(name: "Api status endpoints")]
     public function checkUpdatesAction(GitDriver $gitDriver)
     {
 
@@ -117,10 +131,17 @@ class AppStatusController extends AbstractController
     }
 
     /**
+     * Gets current platform tag.
+     *
      * @param GitDriver $gitDriver
      *
      * @return JsonResponse
      */
+    #[OA\Response(
+      response: 200,
+      description: 'Returns current platform tag',
+    )]
+    #[OA\Tag(name: "Api status endpoints")]
     public function currentTagAction(GitDriver $gitDriver)
     {
         $tag = $gitDriver->getCurrentTag('.');
@@ -138,10 +159,17 @@ class AppStatusController extends AbstractController
     }
 
     /**
+     * Gets a list of platform tags.
+     *
      * @param GitDriver $gitDriver
      *
      * @return JsonResponse
      */
+    #[OA\Tag(name: "Api status endpoints")]
+    #[OA\Response(
+      response: 200,
+      description: 'Gets a list of platform tags',
+    )]
     public function availableTagsAction(GitDriver $gitDriver)
     {
         $tags = $gitDriver->getTagsList('.');
@@ -150,11 +178,24 @@ class AppStatusController extends AbstractController
     }
 
     /**
+     * Switch platform tag.
+     *
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param \App\Services\GitDriver $gitDriver
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
+    #[OA\Response(
+      response: 200,
+      description: 'Switch platform for specified tag',
+    )]
+    #[OA\Tag(name: "Api status endpoints")]
+    #[OA\Parameter(
+      name: 'Tag',
+      description: 'Git tag of a platform',
+      in: 'query',
+      schema: new OA\Schema(type: 'string'),
+    )]
     public function switchTagAction(Request $request, GitDriver $gitDriver)
     {
         $json = $request->getContent();
@@ -181,6 +222,24 @@ class AppStatusController extends AbstractController
         ];
     }
 
+    /**
+     * Perform 'drush uli command'
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    #[OA\Response(
+      response: 200,
+      description: 'Returns drush uli for requested site',
+    )]
+    #[OA\Tag(name: "Api status endpoints")]
+    #[OA\Parameter(
+      name: 'site',
+      description: 'Site name',
+      in: 'query',
+      schema: new OA\Schema(type: 'string'),
+    )]
     public function drushUliAction(Request $request)
     {
         $data = $request->getContent();

@@ -7,10 +7,12 @@ use App\Services\LocalSiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use OpenApi\Attributes as OA;
 
 /**
  * A controller gathers sites information and represents as JSON.
  */
+#[OA\Tag(name: "Api sites")]
 class SitesController extends AbstractController
 {
 
@@ -48,6 +50,10 @@ class SitesController extends AbstractController
      *
      * @return JsonResponse
      */
+    #[OA\Response(
+      response: 200,
+      description: 'Returns local sites list',
+    )]
     public function listAction(LocalSiteManager $localSiteManager)
     {
         $sites = [];

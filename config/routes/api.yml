@@ -6,14 +6,17 @@ command_build:
 api_app_status:
     path: /app-status
     controller: App\Controller\AppStatusController::statusAction
+    methods:    GET
 
 app_status.current_tag:
     path: /app-status/current-tag
     controller: App\Controller\AppStatusController::currentTagAction
+    methods:    GET
 
 app_status.available_tags:
     path: /app-status/available-tags
     controller: App\Controller\AppStatusController::availableTagsAction
+    methods:    GET
 
 app_status.switch_tag:
     path: /app-status/switch-tag
@@ -28,7 +31,9 @@ app_status.check_updates:
 sites_list:
     path: /sites-list
     controller: App\Controller\SitesController::listAction
+    methods:    GET
 
 drush_uli:
     path: /drush-uli
     controller: App\Controller\AppStatusController::drushUliAction
+    methods:    GET
